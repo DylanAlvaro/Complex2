@@ -5,15 +5,20 @@ using Dungeon_Generation;
 using Math;
 using UnityEngine;
 
+using Random = UnityEngine.Random;
+
 public class DungeonCreator : MonoBehaviour
 {
+    [Header("Dungeon Values")]
     public int dungeonWidth; 
     public int dungeonLength;
-    public int dungeonHeight;
     public int roomWidthMin, roomLengthMin; 
     public int maxIterations; 
     public int corridorWidth;
+    public Vector3Int maxRoomSize;
+    public Vector3Int size;
     
+    [Header("Dungeon Room Values")]
     public Material material;
     [Range(0.0f, 0.3f)]
     public float roomBottomCornerModifier;
@@ -22,9 +27,11 @@ public class DungeonCreator : MonoBehaviour
     [Range(0, 2)]
     public int roomOffset;
 
+    [Header("Change wall GameObjects")]
     public GameObject wallVertical;
     public GameObject wallHorizontal;
 
+    [Header("Change Floor GameObjects")]
     public GameObject floorHorizontal;
     public GameObject floorVertical;
 
@@ -35,11 +42,17 @@ public class DungeonCreator : MonoBehaviour
     
     private List<Vector3Int> _possibleFloorHorizPos;
     private List<Vector3Int> _possibleFloorVertPos;
+    public Vector3 floorpos;
+
+    //private variables
+    private bool _addDifferentRooms = true;
+    private List<Rooms> _rooms;
 
     // Start is called before the first frame update
    public void Start()
     {
         CreateDungeon();
+        _rooms = new List<Rooms>();
     }
 
     public void CreateDungeon()
@@ -62,17 +75,17 @@ public class DungeonCreator : MonoBehaviour
         _possibleWallVertPos = new List<Vector3Int>();
 
         GameObject floorParent = new GameObject("FloorParent");
+        floorParent.transform.parent = transform;
         _possibleFloorHorizPos = new List<Vector3Int>();
         _possibleFloorVertPos = new List<Vector3Int>();
 
         for (int i = 0; i < listOfRooms.Count; i++)
         {
-            //CreateFloors(floorParent, listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
-            CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
+          CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
+           //CreateFloors(floorParent);
         }
         
         CreateWalls(wallParent);
-       // CreateFloors(floorParent);
     }
 
     private void CreateWalls(GameObject wallParent)
@@ -149,13 +162,21 @@ public class DungeonCreator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = tris;
 
+        // creates floor mesh
         GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer));
-        
         dungeonFloor.transform.position = Vector3.zero;
         dungeonFloor.transform.localScale = Vector3.one;
         dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
         dungeonFloor.GetComponent<MeshRenderer>().material = material;
         dungeonFloor.transform.parent = transform;
+
+        // creates roof mesh
+        GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
+        dungeonRoof.transform.position = new Vector3(0, 2.5f, 0);
+        dungeonRoof.transform.localScale = Vector3.one;
+        dungeonRoof.GetComponent<MeshFilter>().mesh = mesh;
+        dungeonRoof.GetComponent<MeshRenderer>().material = material;
+        dungeonRoof.transform.parent = transform;
 
         for (int row = (int)bottomLeftVert.x; row < (int)bottomRightVert.x; row++)
         {
@@ -180,7 +201,6 @@ public class DungeonCreator : MonoBehaviour
             var wallPos = new Vector3(bottomRightVert.x, 0, col);
             AddWallPositionToList(wallPos, _possibleWallVertPos, _possibleDoorVertPos);
         }
-        
     }
 
     private void AddWallPositionToList(Vector3 wallPos, List<Vector3Int> wallList, List<Vector3Int> doorList)

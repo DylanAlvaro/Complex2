@@ -4,15 +4,36 @@ namespace Math
 {
     public class Rooms
     {
+        public bool isMainRoom { get; private set; }
+        public bool isStartingRoom { get; private set; }
+        public bool isEndRoom { get; private set; }
+
+
+        public void SetMain()
+        {
+            isMainRoom = true;
+        }
+
+        public void SetStartRoom()
+        {
+            isStartingRoom = true;
+        }
+
+        public void SetEndRoom()
+        {
+            isEndRoom = true;
+        }
+        
         public BoundsInt bounds;
         public Rooms(Vector3Int location, Vector3Int size) {
                 bounds = new BoundsInt(location, size);
             }
 
-            public static bool Intersect(Rooms a, Rooms b) {
-                return !((a.bounds.position.x >= (b.bounds.position.x + b.bounds.size.x)) || ((a.bounds.position.x + a.bounds.size.x) <= b.bounds.position.x)
-                    || (a.bounds.position.y >= (b.bounds.position.y + b.bounds.size.y)) || ((a.bounds.position.y + a.bounds.size.y) <= b.bounds.position.y)
-                    || (a.bounds.position.z >= (b.bounds.position.z + b.bounds.size.z)) || ((a.bounds.position.z + a.bounds.size.z) <= b.bounds.position.z));
-            }
+        public static bool RoomsIntersecting(Rooms room1, Rooms room2)
+        {
+            return !(room1.bounds.position.x >= room2.bounds.position.x + room1.bounds.size.x || room1.bounds.x <= room2.bounds.x  - room2.bounds.size.x||
+                     room1.bounds.y >= room2.bounds.y + room1.bounds.size.y|| room1.bounds.y <= room2.bounds.y - room2.bounds.size.y||
+                     room1.bounds.z >= room2.bounds.z + room1.bounds.size.z|| room1.bounds.z <= room2.bounds.z - room2.bounds.size.z);
+        }
     }
 }

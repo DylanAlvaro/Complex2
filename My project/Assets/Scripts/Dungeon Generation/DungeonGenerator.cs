@@ -13,7 +13,6 @@ namespace Dungeon_Generation
         public int dungeonLength;
         public int dungeonHeight;
         public List<RoomNode> AllNodeCollection = new List<RoomNode>();
-        public DelaunayTriagulation DelaunayTriagulations;
         public Node rootNode;
         public List<Rooms> rooms;
 
@@ -36,17 +35,6 @@ namespace Dungeon_Generation
             var corridorList = corridorsGenerator.CreateCorridor(AllNodeCollection, corridorWidth);
             
             return new List<Node>(roomList).Concat(corridorList).ToList();
-        }
-
-        public void Triangulate()
-        {
-            List<Vertex> vertices = new List<Vertex>();
-            foreach (var room in rooms) 
-            {
-                vertices.Add(new Vertex<Rooms>((Vector3)room.bounds.position + ((Vector3)room.bounds.size) / 2, room));
-            }
-           
-            DelaunayTriagulations = DelaunayTriagulation.Triangulate(vertices);
         }
     }
 }

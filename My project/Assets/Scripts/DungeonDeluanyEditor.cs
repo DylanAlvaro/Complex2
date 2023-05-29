@@ -2,8 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace DefaultNamespace
-{
     [CustomEditor(typeof(DelaunayDungeon))]
     public class DungeonDeluanyEditor : Editor
     {
@@ -18,4 +16,3 @@ namespace DefaultNamespace
             }
         }
     }
-}

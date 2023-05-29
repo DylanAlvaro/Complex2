@@ -6,6 +6,7 @@ namespace Algorithms
 {
     public static class PrimsAlgorithm 
     {
+
         public class Edge : Graphs.Edge {
         public float Distance { get; private set; }
 
