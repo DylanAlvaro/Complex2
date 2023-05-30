@@ -78,7 +78,8 @@ namespace Dungeon_Generation
 
             int y = GetValidYForNeighbourLeftRight(leftStruct.TopLeftAreaCorner, leftStruct.BottomRightAreaCorner,
                 rightStruct.TopLeftAreaCorner, rightStruct.BottomLeftAreaCorner);
-
+            
+            
             while (y == -1 && sortedLeftStruct.Count > 0)
             {
                 sortedLeftStruct = sortedLeftStruct
@@ -141,7 +142,7 @@ namespace Dungeon_Generation
 
             return -1;
         }
-
+        
         private void ProcessRoomInRelationUpOrDown(Node structure1, Node structure2)
         {
             Node bottomStruct = null;
