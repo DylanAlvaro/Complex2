@@ -9,6 +9,19 @@ namespace Math
         public bool isEndRoom { get; private set; }
 
 
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+
+        public Rooms(int _x, int _y, int _width, int _height)
+        {
+            this.x = _x;
+            this.y = _y;
+            this.width = _width;
+            this.height = _height;
+        }
+        
         public void SetMain()
         {
             isMainRoom = true;

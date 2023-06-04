@@ -38,7 +38,6 @@ namespace Math
 
             return listToReturn;
         }
-
         public static Vector2Int GenerateBottomLeftCornerBetween(
             Vector2Int boundaryLeftPoint, Vector2Int boundaryRightPoint, float pointModifier, int offset)
         {

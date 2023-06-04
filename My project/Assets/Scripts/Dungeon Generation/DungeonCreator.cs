@@ -38,6 +38,8 @@ public class DungeonCreator : MonoBehaviour
     public GameObject floorHorizontal;
     public GameObject floorVertical;
 
+    [Header("Player Prefab")] 
+    public GameObject playerPrefab;
     
     private List<Vector3Int> _possibleDoorVertPos;
     private List<Vector3Int> _possibleDoorHorizPos;
@@ -55,7 +57,13 @@ public class DungeonCreator : MonoBehaviour
 
     public int minObjectDistance = 3;
     DungeonData dungeonData;
-    
+    private int[,] dungeonMap;
+    private Rooms _startRoom;
+    private Rooms _endRoom;
+    private int _endRoomIndex;
+    private int _startRoomIndex;
+
+    private RoomGenerator _roomGenerator;
 
     // Start is called before the first frame update
    public void Start()
@@ -88,14 +96,34 @@ public class DungeonCreator : MonoBehaviour
         _possibleFloorHorizPos = new List<Vector3Int>();
         _possibleFloorVertPos = new List<Vector3Int>();
 
+        
+        
+        int startRoom = Random.Range(maxIterations / 2, listOfRooms.Count / 2);
         for (int i = 0; i < listOfRooms.Count; i++)
         {
-          CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
+            CreateFloorAndRoof(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
+
+          if (i == 0)
+          {
+             PlacePlayerInWorld(new Vector3Int(listOfRooms[i].BottomLeftAreaCorner.x + listOfRooms[i].TopRightAreaCorner.x) / 2, 1, 
+                 (listOfRooms[i].BottomLeftAreaCorner.y + listOfRooms[i].TopRightAreaCorner.y) / 2);
+             
+            // PlacePlayerInWorld(new Vector3Int(listOfRooms[i].BottomLeftAreaCorner.x + listOfRooms[i].TopRightAreaCorner.x) / 2,
+            //     1, listOfRooms[i].BottomLeftAreaCorner.y + listOfRooms[i].TopRightAreaCorner.y) /2);
+             
+          }
            //CreateFloors(listOfRooms[i].BottomLeftAreaCorner, );
         }
+
+        int endRoomIndex = Random.Range(maxIterations / 2, listOfRooms.Count / 2);
+        for (int j = 0; j < listOfRooms.Count; j++)
+        {
+            CreateFloorAndRoof(listOfRooms[j].BottomLeftAreaCorner, listOfRooms[j].TopRightAreaCorner);
+        }
+        //_startRoom = CalculateRooms()
         
         CreateWalls(wallParent);
-        CreateFloors(floorParent);
+      //  CreateFloors(floorParent);
     }
 
     private void CreateWalls(GameObject wallParent)
@@ -154,7 +182,7 @@ public class DungeonCreator : MonoBehaviour
     /// </summary>
     /// <param name="bottomLeftCorner"></param>
     /// <param name="topRightCorner"></param>
-    private void CreateMesh(Vector2 bottomLeftCorner, Vector2 topRightCorner)
+    private void CreateFloorAndRoof(Vector2 bottomLeftCorner, Vector2 topRightCorner)
     {
         Vector3 bottomLeftVert = new Vector3(bottomLeftCorner.x, 0, bottomLeftCorner.y);
         Vector3 bottomRightVert = new Vector3(topRightCorner.x, 0, bottomLeftCorner.y);
@@ -268,10 +296,13 @@ public class DungeonCreator : MonoBehaviour
         PlaceCube(location, size);
     }
 
-    public void PlacePlayerInWorld()
+    public void PlacePlayerInWorld(Vector3Int location, Vector3Int size)
     {
-        
+        Instantiate(playerPrefab, location, Quaternion.identity);
+        playerPrefab.GetComponent<Transform>().localScale = size;
     }
+    
+    
     
     
  private void PlaceObjectsInRoom(RoomNode room) 
@@ -296,5 +327,5 @@ public class DungeonCreator : MonoBehaviour
             }
         }
     }
- 
 }
+
