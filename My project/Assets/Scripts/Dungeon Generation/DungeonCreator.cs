@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Dungeon_Generation;
 using Math;
-
 using System.Linq;
-
+using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 public class DungeonCreator : MonoBehaviour
@@ -21,8 +20,9 @@ public class DungeonCreator : MonoBehaviour
     public Vector3Int maxRoomSize;
     public Vector3Int size;
     
-    [Header("Dungeon Room Values")]
-    public Material material;
+    [Header("Dungeon Room Modifiers")]
+    public Material floorMaterial;
+    public Material roofMaterial;
     [Range(0.0f, 0.3f)]
     public float roomBottomCornerModifier;
     [Range(0.7f, 1.0f)]
@@ -30,103 +30,86 @@ public class DungeonCreator : MonoBehaviour
     [Range(0, 2)]
     public int roomOffset;
 
-    [Header("Change wall GameObjects")]
-    public GameObject wallVertical;
+    [Header("Change GameObjects")]
     public GameObject wallHorizontal;
-
-    [Header("Change Floor GameObjects")]
-    public GameObject floorHorizontal;
-    public GameObject floorVertical;
-
-    [Header("Player Prefab")] 
-    public GameObject playerPrefab;
+    public GameObject wallVertical;
+    public GameObject floorPrefab;
     
-    private List<Vector3Int> _possibleDoorVertPos;
-    private List<Vector3Int> _possibleDoorHorizPos;
+    [Header("Player Prefab")] 
+    public GameObject player;
+
+    [Header("Spawn Items")] 
+    public GameObject itemSpawn;
+    public int ItemCount;
+    
+    [Header("Enemey Values")]
+    public GameObject enemeyPrefab;
+    public int enemeyCount;
+    public GameObject[] changeEnemiesOBJ;
+    public GameObject _enemiesObject;
+    
     private List<Vector3Int> _possibleWallHorizPos;
     private List<Vector3Int> _possibleWallVertPos;
     private List<Vector3Int> _possibleFloorHorizPos;
     private List<Vector3Int> _possibleFloorVertPos;
-
-    //private variables
-    private bool _addDifferentRooms = true;
-    private List<Rooms> _rooms;
-    private bool positionOccupied = false;
-    private List<GameObject> gameObjectsToSpawn;
-    [SerializeField] private List<Props> propsToPlace;
-
-    public int minObjectDistance = 3;
-    DungeonData dungeonData;
-    private int[,] dungeonMap;
-    private Rooms _startRoom;
-    private Rooms _endRoom;
-    private int _endRoomIndex;
-    private int _startRoomIndex;
-
-    private RoomGenerator _roomGenerator;
-
-    // Start is called before the first frame update
+    
+    public bool playerSpawned = false;
+    public bool itemSpawned = false;
+    
    public void Start()
     {
         CreateDungeon();
-        _rooms = new List<Rooms>();
     }
 
-    public void CreateDungeon()
-    {
-        DestroyAllChildren();
-        DungeonGenerator generator = new DungeonGenerator(dungeonWidth, dungeonLength);
-        var listOfRooms = generator.CalculateRooms(maxIterations,
-            roomWidthMin,
-            roomLengthMin,
-            roomBottomCornerModifier,
-            roomTopCornerMidifier,
-            roomOffset,
-            corridorWidth);
+   public void CreateDungeon()
+   {
+       DestroyAllChildren();
+       DungeonGenerator generator = new DungeonGenerator(dungeonWidth, dungeonLength);
+       var listOfRooms = generator.CalculateRooms(maxIterations,
+           roomWidthMin,
+           roomLengthMin,
+           roomBottomCornerModifier,
+           roomTopCornerMidifier,
+           roomOffset,
+           corridorWidth);
 
-        GameObject wallParent = new GameObject("WallParent");
-        wallParent.transform.parent = transform;
-        _possibleDoorVertPos = new List<Vector3Int>();
-        _possibleDoorHorizPos = new List<Vector3Int>();
-        _possibleWallHorizPos = new List<Vector3Int>();
-        _possibleWallVertPos = new List<Vector3Int>();
+       GameObject wallParent = new GameObject("WallParent");
+       wallParent.transform.parent = transform;
+       _possibleWallHorizPos = new List<Vector3Int>();
+       _possibleWallVertPos = new List<Vector3Int>();
 
-        GameObject floorParent = new GameObject("FloorParent");
-        floorParent.transform.parent = transform;
-        _possibleFloorHorizPos = new List<Vector3Int>();
-        _possibleFloorVertPos = new List<Vector3Int>();
+       GameObject floorParent = new GameObject("FloorParent");
+       floorParent.transform.parent = transform;
+       _possibleFloorHorizPos = new List<Vector3Int>();
+       _possibleFloorVertPos = new List<Vector3Int>();
+       
+       playerSpawned = false;
+       itemSpawned = false;
+       // Will generate the room 
+       for (int i = 0; i < listOfRooms.Count; i++)
+       {
+           CreateFloorAndRoof(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
+           
+           if (!playerSpawned)
+           {
+               Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 0f);
+               Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 0f);
+               PlacePlayerInWorld(minRange, maxRange);
+               playerSpawned = true;
+           }
 
-        
-        
-        int startRoom = Random.Range(maxIterations / 2, listOfRooms.Count / 2);
-        for (int i = 0; i < listOfRooms.Count; i++)
-        {
-            CreateFloorAndRoof(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
-
-          if (i == 0)
-          {
-             PlacePlayerInWorld(new Vector3Int(listOfRooms[i].BottomLeftAreaCorner.x + listOfRooms[i].TopRightAreaCorner.x) / 2, 1, 
-                 (listOfRooms[i].BottomLeftAreaCorner.y + listOfRooms[i].TopRightAreaCorner.y) / 2);
-             
-            // PlacePlayerInWorld(new Vector3Int(listOfRooms[i].BottomLeftAreaCorner.x + listOfRooms[i].TopRightAreaCorner.x) / 2,
-            //     1, listOfRooms[i].BottomLeftAreaCorner.y + listOfRooms[i].TopRightAreaCorner.y) /2);
-             
-          }
-           //CreateFloors(listOfRooms[i].BottomLeftAreaCorner, );
-        }
-
-        int endRoomIndex = Random.Range(maxIterations / 2, listOfRooms.Count / 2);
-        for (int j = 0; j < listOfRooms.Count; j++)
-        {
-            CreateFloorAndRoof(listOfRooms[j].BottomLeftAreaCorner, listOfRooms[j].TopRightAreaCorner);
-        }
-        //_startRoom = CalculateRooms()
-        
-        CreateWalls(wallParent);
-      //  CreateFloors(floorParent);
-    }
-
-    private void CreateWalls(GameObject wallParent)
+           if (!itemSpawned)
+           {
+               Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 5f);
+               Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 5f);
+               PlaceEndItemInWorld(minRange, maxRange);
+               itemSpawned = true;
+           }
+       }
+       CreateWalls(wallParent);
+   }
+   
+   private void CreateWalls(GameObject wallParent)
     {
         foreach (var wallPos in _possibleWallHorizPos)
         {
@@ -143,42 +126,11 @@ public class DungeonCreator : MonoBehaviour
     {
         Instantiate(wallPrefab, wallPos, Quaternion.identity, wallParent.transform);
     }
-
-    private void CreateFloors(GameObject floorParent)
-    {
-        foreach (var floorPos in _possibleFloorHorizPos)
-        {
-            CreateFloor(floorParent, floorPos, floorHorizontal);
-        }
-        
-        foreach (var floorPos in _possibleFloorVertPos)
-        {
-            CreateFloor(floorParent, floorPos, floorVertical);
-        }
-    }
-
-    private void CreateFloor(GameObject floorParent, Vector3Int floorPos, GameObject floorPrefab)
-    {
-        Instantiate(floorPrefab, floorPos, Quaternion.identity, floorParent.transform);
-    }
-
-
-    private void GenerateFloors(Vector2 bottomLeftCorner, Vector2 topRightCorner)
-    {
-        Vector3 bottomLeftVert = new Vector3(bottomLeftCorner.x, 0, bottomLeftCorner.y);
-        Vector3 bottomRightVert = new Vector3(topRightCorner.x, 0, bottomLeftCorner.y);
-        Vector3 topLeftVert = new Vector3(bottomLeftCorner.x, 0, topRightCorner.y);
-        Vector3 topRightVert = new Vector3(topRightCorner.x, 0, topRightCorner.y);
-
-
-       // for(int i = 0; i < UPPER; i++)
-       // {
-       //     
-       // }
-    }
+    
     
     /// <summary>
     /// CodeMonkeys Implementation of creating a 3D mesh in code
+    /// https://www.youtube.com/watch?v=gmuHI_wsOgI&ab_channel=CodeMonkey
     /// </summary>
     /// <param name="bottomLeftCorner"></param>
     /// <param name="topRightCorner"></param>
@@ -196,7 +148,8 @@ public class DungeonCreator : MonoBehaviour
            bottomLeftVert,
            bottomRightVert
        };
-//
+
+       //uvs calculation
        Vector2[] uvs = new Vector2[vertices.Length];
        for (int i = 0; i < uvs.Length; i++)
        {
@@ -212,56 +165,54 @@ public class DungeonCreator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.vertices = vertices;
         mesh.triangles = tris;
-
+        
         // creates floor mesh
-       GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer));
+       GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider), typeof(NavMesh));
        dungeonFloor.transform.position = Vector3.zero;
        dungeonFloor.transform.localScale = Vector3.one;
        dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
-       dungeonFloor.GetComponent<MeshRenderer>().material = material;
-       dungeonFloor.transform.parent = transform;
-       Instantiate(dungeonFloor, Vector3.zero, Quaternion.identity);
+       dungeonFloor.GetComponent<MeshRenderer>().material = floorMaterial;
+       dungeonFloor.GetComponent<MeshCollider>().sharedMesh = mesh;
+
 
        // creates roof mesh
-        //GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
-        //dungeonRoof.transform.position = new Vector3(0, 3f, 0);
-        //dungeonRoof.transform.localScale = Vector3.one;
-        //dungeonRoof.GetComponent<MeshFilter>().mesh = mesh;
-        //dungeonRoof.GetComponent<MeshRenderer>().material = material;
-        //dungeonRoof.transform.parent = transform;
-//
+       GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
+       dungeonRoof.transform.position = new Vector3(0, 3f, 0);
+       dungeonRoof.transform.localScale = Vector3.one;
+       dungeonRoof.GetComponent<MeshFilter>().mesh = mesh;
+       dungeonRoof.GetComponent<MeshRenderer>().material = roofMaterial;
+       dungeonRoof.transform.parent = transform;
+
         // walls
         for (int row = (int)bottomLeftVert.x; row < (int)bottomRightVert.x; row++)
         {
             var wallPos = new Vector3(row, 0, bottomLeftVert.z);
-            AddWallPositionToList(wallPos, _possibleWallHorizPos, _possibleDoorHorizPos);
-        }
-
+            AddWallPositionToList(wallPos, _possibleWallHorizPos);
+        } 
+        
         for (int row = (int)topLeftVert.x; row < (int)topRightCorner.x; row++)
         {
             var wallPos = new Vector3(row, 0, topRightVert.z);
-            AddWallPositionToList(wallPos, _possibleWallHorizPos, _possibleDoorHorizPos);
+            AddWallPositionToList(wallPos, _possibleWallHorizPos);
         }
 
         for (int col = (int)bottomLeftVert.z; col < (int)topLeftVert.z; col++)
         {
             var wallPos = new Vector3(bottomLeftVert.x, 0, col);
-            AddWallPositionToList(wallPos, _possibleWallVertPos, _possibleDoorVertPos);
+            AddWallPositionToList(wallPos, _possibleWallVertPos);
         }
         
         for (int col = (int)bottomRightVert.z; col < (int)topRightVert.z; col++)
         {
             var wallPos = new Vector3(bottomRightVert.x, 0, col);
-            AddWallPositionToList(wallPos, _possibleWallVertPos, _possibleDoorVertPos);
+            AddWallPositionToList(wallPos, _possibleWallVertPos);
         }
     }
-
-    private void AddWallPositionToList(Vector3 wallPos, List<Vector3Int> wallList, List<Vector3Int> doorList)
+    private void AddWallPositionToList(Vector3 wallPos, List<Vector3Int> wallList)
     {
         Vector3Int point = Vector3Int.CeilToInt(wallPos);
         if (wallList.Contains(point))
         {
-            doorList.Add(point);
             wallList.Remove(point);
         }
         else
@@ -269,55 +220,53 @@ public class DungeonCreator : MonoBehaviour
             wallList.Add(point);
         }
     }
-
-    private void AddFloorPositionToList(Vector3 floorPos, List<Vector3Int> floorList, List<Vector3Int> wallList)
+    
+    public void PlacePlayerInWorld(Vector3 minRange, Vector3 maxRange)
     {
-        Vector3Int point = Vector3Int.CeilToInt(floorPos);
+        float spawnX = Random.Range(minRange.x, maxRange.x );
+        float spawnY = Random.Range(minRange.y, maxRange.y );
+        Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
+        
+        var playerSpawn = Instantiate(player);
+        playerSpawn.name = "Player";
+        playerSpawn.transform.parent = transform.parent;
+        playerSpawn.transform.localPosition = spawnPosition;
+    }
 
-        if(floorList.Contains(point))
+    public void PlaceEndItemInWorld(Vector3 minRange, Vector3 maxRange)
+    {
+        for (int i = 0; i < ItemCount; i++)
         {
-            wallList.Add(point);
-            floorList.Remove(point);
+            float spawnY = Random.Range(minRange.x, maxRange.y);
+            float spawnX = Random.Range(minRange.x, maxRange.x);
+            
+            Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
+            
+            var item = Instantiate(itemSpawn);
+            item.name = "End Item";
+            item.transform.parent = transform.parent;
+            item.transform.localPosition = spawnPosition;
         }
-        else
+    }
+
+    public void PlaceEnemiesInWorld()
+    {
+        _enemiesObject = new GameObject("Enemies");
+        _enemiesObject.transform.parent = transform;
+        _enemiesObject.transform.localPosition = Vector3.zero;
+
+        changeEnemiesOBJ = new GameObject[enemeyCount];
+
+        for (int i = 0; i < enemeyCount; i++)
         {
-            floorList.Add(point);
+            GameObject newEnemy = Instantiate(enemeyPrefab);
+            newEnemy.name = "enemey" + (i + 1);
+            newEnemy.transform.localPosition = new Vector3(i / 2f, 0f, i % 2f);
+            changeEnemiesOBJ[i] = newEnemy;
         }
     }
     
-    void PlaceCube(Vector3Int location, Vector3Int size) 
-    {
-        floorHorizontal = Instantiate(floorHorizontal, location, Quaternion.identity);
-        floorHorizontal.GetComponent<Transform>().localScale = size;
-        floorHorizontal.GetComponent<MeshRenderer>().material = material;
-    }
-    void PlaceRoom(Vector3Int location, Vector3Int size) 
-    {
-        PlaceCube(location, size);
-    }
-
-    public void PlacePlayerInWorld(Vector3Int location, Vector3Int size)
-    {
-        Instantiate(playerPrefab, location, Quaternion.identity);
-        playerPrefab.GetComponent<Transform>().localScale = size;
-    }
-    
-    
-    
-    
- private void PlaceObjectsInRoom(RoomNode room) 
- {
-    //Vector2Int roomCenter = room.isMainRoom;
-    int numObjects = Random.Range(1, 4); // Choose a random number of objects to place
-
-    for (int i = 0; i < numObjects; i++)
-    {
-        // Generate a random position within the room
-       // Vector3Int roomPosition = Random.Range()
-    } 
-    
- }
- private void DestroyAllChildren()
+    private void DestroyAllChildren()
     {
         while (transform.childCount != 0)
         {

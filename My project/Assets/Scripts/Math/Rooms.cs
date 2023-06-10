@@ -1,14 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Math
 {
-    public class Rooms
+    public class Rooms : MonoBehaviour
     {
         public bool isMainRoom { get; private set; }
         public bool isStartingRoom { get; private set; }
         public bool isEndRoom { get; private set; }
 
+        private bool isPlayerInside;
 
+        public GameObject playerPrefab;
+        
         public int x;
         public int y;
         public int width;
