@@ -1,22 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlayerExampleScripts
 {
     public class ObjectPickup : MonoBehaviour
     {
-        private TextMeshProUGUI text;
-        public DungeonCreator item;
+        private List<GameObject> itemsList;
+        [SerializeField] 
+        private TextMeshProUGUI itemText;
+
+        public int items;
+        private bool collectedItems;
+        private Canvas _canvas;
 
         private void Start()
         {
-            text = GetComponent<TextMeshProUGUI>();
+            items = 0;
+            _canvas = FindObjectOfType<Canvas>();
+
+            if (_canvas != null)
+                itemText = _canvas.GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        private void Update()
+        private void OnTriggerEnter(Collider other)
         {
-            text.text = item.ItemCount.ToString();
+            if (other.CompareTag("endItem"))
+            {
+                Destroy(other.gameObject);
+                items++;
+                itemText.text = "Items Collected: " + items;
+            }
+
+            if (items >= 5)
+            {
+                LoadNextScene();
+            }
+        }
+
+        void LoadNextScene()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 }

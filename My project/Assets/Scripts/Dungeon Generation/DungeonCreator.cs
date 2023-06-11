@@ -42,12 +42,6 @@ public class DungeonCreator : MonoBehaviour
     public GameObject itemSpawn;
     public int ItemCount;
     
-    [Header("Enemey Values")]
-    public GameObject enemeyPrefab;
-    public int enemeyCount;
-    public GameObject[] changeEnemiesOBJ;
-    public GameObject _enemiesObject;
-    
     private List<Vector3Int> _possibleWallHorizPos;
     private List<Vector3Int> _possibleWallVertPos;
     private List<Vector3Int> _possibleFloorHorizPos;
@@ -167,7 +161,7 @@ public class DungeonCreator : MonoBehaviour
         mesh.triangles = tris;
         
         // creates floor mesh
-       GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider), typeof(NavMesh));
+       GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
        dungeonFloor.transform.position = Vector3.zero;
        dungeonFloor.transform.localScale = Vector3.one;
        dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
@@ -246,23 +240,6 @@ public class DungeonCreator : MonoBehaviour
             item.name = "End Item";
             item.transform.parent = transform.parent;
             item.transform.localPosition = spawnPosition;
-        }
-    }
-
-    public void PlaceEnemiesInWorld()
-    {
-        _enemiesObject = new GameObject("Enemies");
-        _enemiesObject.transform.parent = transform;
-        _enemiesObject.transform.localPosition = Vector3.zero;
-
-        changeEnemiesOBJ = new GameObject[enemeyCount];
-
-        for (int i = 0; i < enemeyCount; i++)
-        {
-            GameObject newEnemy = Instantiate(enemeyPrefab);
-            newEnemy.name = "enemey" + (i + 1);
-            newEnemy.transform.localPosition = new Vector3(i / 2f, 0f, i % 2f);
-            changeEnemiesOBJ[i] = newEnemy;
         }
     }
     

@@ -1,0 +1,15 @@
+{
+  "name": "com.aiedylanalvaro.procedural-generation",
+  "version": "1.0.0",
+  "displayName": "Procedural Dungeon Generation",
+  "description": "A simple BSP Dungeon Generator",
+  "unity": "2021.3",
+  "dependencies": {},
+  "keywords": [ "library", "procedural", "dungeon", "generation" ],
+  "author": {
+    "name": "Dylan Alvaro"
+  }
+
+}
+
+
