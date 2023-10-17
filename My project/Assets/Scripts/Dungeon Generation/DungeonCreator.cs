@@ -41,6 +41,20 @@ public class DungeonCreator : MonoBehaviour
     [Header("Spawn Items")] 
     public GameObject itemSpawn;
     public int ItemCount;
+
+    [Header("Set Dressing")] 
+    [Header("Obstacles")]
+    public GameObject obstacleSpawns;
+    public int obstacleCount;
+    public PlacesToSpawn obstacleSpawnLocations = new PlacesToSpawn();
+    
+    [Header("Collectables")]
+    public GameObject[] collectableSpawns;
+    public int collectableCount;
+    public PlacesToSpawn collectableSpawnLocations = new PlacesToSpawn();
+
+    [Header("Minimap")]
+
     
     private List<Vector3Int> _possibleWallHorizPos;
     private List<Vector3Int> _possibleWallVertPos;
@@ -49,7 +63,15 @@ public class DungeonCreator : MonoBehaviour
     
     public bool playerSpawned = false;
     public bool itemSpawned = false;
-    
+    public bool obstacleSpawned = false;
+    public bool collectableSpawned = false;
+
+    public enum PlacesToSpawn
+    {
+        Corner,
+        Middle,
+        Hallway
+    }
    public void Start()
     {
         CreateDungeon();
@@ -79,6 +101,9 @@ public class DungeonCreator : MonoBehaviour
        
        playerSpawned = false;
        itemSpawned = false;
+       obstacleSpawned = false;
+       collectableSpawned = false;
+       
        // Will generate the room 
        for (int i = 0; i < listOfRooms.Count; i++)
        {
@@ -98,6 +123,22 @@ public class DungeonCreator : MonoBehaviour
                Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 5f);
                PlaceEndItemInWorld(minRange, maxRange);
                itemSpawned = true;
+           }
+           
+           if (!obstacleSpawned)
+           {
+               Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 5f);
+               Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 5f);
+               PlaceObstaclesInWorld(minRange, maxRange);
+               obstacleSpawned = true;
+           }
+           
+           if (!collectableSpawned)
+           {
+               Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 5f);
+               Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 5f);
+               PlaceCollectablesInWorld(minRange, maxRange);
+               collectableSpawned = true;
            }
        }
        CreateWalls(wallParent);
@@ -169,13 +210,13 @@ public class DungeonCreator : MonoBehaviour
        dungeonFloor.GetComponent<MeshCollider>().sharedMesh = mesh;
 
 
-       // creates roof mesh
-       GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
-       dungeonRoof.transform.position = new Vector3(0, 3f, 0);
-       dungeonRoof.transform.localScale = Vector3.one;
-       dungeonRoof.GetComponent<MeshFilter>().mesh = mesh;
-       dungeonRoof.GetComponent<MeshRenderer>().material = roofMaterial;
-       dungeonRoof.transform.parent = transform;
+       //// creates roof mesh
+       //GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
+       //dungeonRoof.transform.position = new Vector3(0, 3f, 0);
+       //dungeonRoof.transform.localScale = Vector3.one;
+       //dungeonRoof.GetComponent<MeshFilter>().mesh = mesh;
+       //dungeonRoof.GetComponent<MeshRenderer>().material = roofMaterial;
+       //dungeonRoof.transform.parent = transform;
 
         // walls
         for (int row = (int)bottomLeftVert.x; row < (int)bottomRightVert.x; row++)
@@ -240,6 +281,40 @@ public class DungeonCreator : MonoBehaviour
             item.name = "End Item";
             item.transform.parent = transform.parent;
             item.transform.localPosition = spawnPosition;
+        }
+    }
+
+    public void PlaceObstaclesInWorld(Vector3 minRange, Vector3 maxRange)
+    {
+        for (int i = 0; i < obstacleCount; i++)
+        {
+            float spawnY = Random.Range(minRange.x, maxRange.y);
+            float spawnX = Random.Range(minRange.x, maxRange.x);
+            
+            Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
+            
+            var obstacle = Instantiate(obstacleSpawns);
+            obstacle.name = "ObstacleItems";
+            obstacle.transform.parent = transform.parent;
+            obstacle.transform.localPosition = spawnPosition;
+        }
+    }
+    
+    public void PlaceCollectablesInWorld(Vector3 minRange, Vector3 maxRange)
+    {
+        for (int i = 0; i < collectableCount; i++)
+        {
+            float spawnY = Random.Range(minRange.x, maxRange.y);
+            float spawnX = Random.Range(minRange.x, maxRange.x);
+            
+            Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
+            
+            //var collectables = Instantiate(collectableSpawns);
+
+            var collectables = collectableSpawns[i] = Instantiate(collectableSpawns[i]) as GameObject;
+            collectables.name = "ObstacleItems";
+            collectables.transform.parent = transform.parent;
+            collectables.transform.localPosition = spawnPosition;
         }
     }
     
