@@ -285,6 +285,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &962884003 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 962884003, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+  m_PrefabInstance: {fileID: 1596043078619926926}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1596043078619926926
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -437,5 +448,45 @@ PrefabInstance:
       propertyPath: m_Name
       value: Generator
       objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: minimapImage
+      value: 
+      objectReference: {fileID: 962884003}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: maxIterations
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: obstacleCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: obstacleSpawns
+      value: 
+      objectReference: {fileID: 192367576345370799, guid: 2e0c98aad5c07974ba4946b242966175, type: 3}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: collectableCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: obstacleSpawns.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: collectableSpawns.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: collectableSpawns.Array.data[0]
+      value: 
+      objectReference: {fileID: 6674187735775623709, guid: 10eea101a4d61f3428146a066ed975f1, type: 3}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: collectableSpawns.Array.data[1]
+      value: 
+      objectReference: {fileID: 2646430583919363153, guid: 6c80ed259ba32d14c9e161909ab05269, type: 3}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: collectableSpawns.Array.data[2]
+      value: 
+      objectReference: {fileID: 7050440809450760067, guid: 17b91ae17f5bfb64088a4d9df9cb7abf, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}

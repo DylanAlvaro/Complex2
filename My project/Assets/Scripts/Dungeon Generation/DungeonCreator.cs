@@ -7,6 +7,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class DungeonCreator : MonoBehaviour
@@ -53,18 +54,38 @@ public class DungeonCreator : MonoBehaviour
     public int collectableCount;
     public PlacesToSpawn collectableSpawnLocations = new PlacesToSpawn();
 
-    [Header("Minimap")]
-
+    [Header("Minimap")] 
+    public Texture2D exploredAreas;
+    public RawImage minimapImage;
+    public Texture2D minimapTexture;
+    private Color[] _exploredAreaColors;
+    private bool[,] _exploredAreaMap;
+    private Color _playerColor = Color.blue;
+    private Color _exploredItemColor = Color.red;
+    private Color _exploredCollectableColor = Color.yellow;
+    private Color _exploredRoomColor = Color.green;
+    private Transform _minimap;
+    private bool _exploredRoom;
     
+
     private List<Vector3Int> _possibleWallHorizPos;
     private List<Vector3Int> _possibleWallVertPos;
     private List<Vector3Int> _possibleFloorHorizPos;
     private List<Vector3Int> _possibleFloorVertPos;
+
+    private Transform _playerSpawned;
+    private Transform _itemSpawned;
+    private Transform _obstacleSpawned;
+    private Transform _collectablesSpawned;
+    private Transform _roomSpawned;
     
-    public bool playerSpawned = false;
-    public bool itemSpawned = false;
-    public bool obstacleSpawned = false;
-    public bool collectableSpawned = false;
+    private Vector3 _exploredHallway;
+    private GameObject _dungeonFloor;
+    private bool playerSpawned = false;
+    private bool itemSpawned = false;
+    private bool obstacleSpawned = false;
+    private bool collectableSpawned = false;
+    private bool minimapSpawned = false;
 
     public enum PlacesToSpawn
     {
@@ -75,7 +96,13 @@ public class DungeonCreator : MonoBehaviour
    public void Start()
     {
         CreateDungeon();
+        InitializeMinimap();
     }
+
+   private void Update()
+   {
+      UpdateMinimap();
+   }
 
    public void CreateDungeon()
    {
@@ -103,6 +130,7 @@ public class DungeonCreator : MonoBehaviour
        itemSpawned = false;
        obstacleSpawned = false;
        collectableSpawned = false;
+       minimapSpawned = false;
        
        // Will generate the room 
        for (int i = 0; i < listOfRooms.Count; i++)
@@ -201,16 +229,24 @@ public class DungeonCreator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = tris;
         
+        //adds rooms to minimap (hopefully)
+        
+        
+        
         // creates floor mesh
-       GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
-       dungeonFloor.transform.position = Vector3.zero;
-       dungeonFloor.transform.localScale = Vector3.one;
-       dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
-       dungeonFloor.GetComponent<MeshRenderer>().material = floorMaterial;
-       dungeonFloor.GetComponent<MeshCollider>().sharedMesh = mesh;
+        
+        _dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
+        _dungeonFloor.transform.position = Vector3.zero;
+        _dungeonFloor.transform.localScale = Vector3.one;
+        _dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
+        _dungeonFloor.GetComponent<MeshRenderer>().material = floorMaterial;
+        _dungeonFloor.GetComponent<MeshCollider>().sharedMesh = mesh;
 
+        _roomSpawned = _dungeonFloor.transform;
+        _roomSpawned.transform.position = Vector3.zero;
+        Debug.Log("location" + _roomSpawned.transform);
 
-       //// creates roof mesh
+        //// creates roof mesh
        //GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
        //dungeonRoof.transform.position = new Vector3(0, 3f, 0);
        //dungeonRoof.transform.localScale = Vector3.one;
@@ -257,15 +293,18 @@ public class DungeonCreator : MonoBehaviour
     }
     
     public void PlacePlayerInWorld(Vector3 minRange, Vector3 maxRange)
-    {
+    { 
         float spawnX = Random.Range(minRange.x, maxRange.x );
         float spawnY = Random.Range(minRange.y, maxRange.y );
+        
         Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
         
         var playerSpawn = Instantiate(player);
         playerSpawn.name = "Player";
         playerSpawn.transform.parent = transform.parent;
         playerSpawn.transform.localPosition = spawnPosition;
+
+        _playerSpawned = playerSpawn.transform;
     }
 
     public void PlaceEndItemInWorld(Vector3 minRange, Vector3 maxRange)
@@ -281,6 +320,8 @@ public class DungeonCreator : MonoBehaviour
             item.name = "End Item";
             item.transform.parent = transform.parent;
             item.transform.localPosition = spawnPosition;
+
+            _itemSpawned = item.transform;
         }
     }
 
@@ -304,8 +345,8 @@ public class DungeonCreator : MonoBehaviour
     {
         for (int i = 0; i < collectableCount; i++)
         {
-            float spawnY = Random.Range(minRange.x, maxRange.y);
-            float spawnX = Random.Range(minRange.x, maxRange.x);
+            float spawnY = Random.Range(minRange.x, maxRange.z);
+            float spawnX = Random.Range(minRange.x, maxRange.z);
             
             Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
             
@@ -315,7 +356,70 @@ public class DungeonCreator : MonoBehaviour
             collectables.name = "ObstacleItems";
             collectables.transform.parent = transform.parent;
             collectables.transform.localPosition = spawnPosition;
+
+            _collectablesSpawned = collectables.transform;
         }
+    }
+
+    private void InitializeMinimap()
+    {
+        minimapTexture = new Texture2D(dungeonWidth, dungeonLength);
+        _exploredAreaColors = new Color[dungeonWidth * dungeonLength];
+        _exploredAreaMap = new bool[dungeonWidth, dungeonLength];
+
+        for (int i = 0; i < dungeonWidth; i++)
+        {
+            for (int j = 0; j < dungeonLength; j++)
+            {
+                _exploredAreaColors[j * dungeonWidth + i] = Color.black;
+            }
+        }
+        
+        minimapTexture.SetPixels(_exploredAreaColors);
+        minimapTexture.Apply();
+
+        minimapImage.texture = minimapTexture;
+    }
+
+    private void UpdateMinimap()
+    {
+        int SpawnX = Mathf.RoundToInt(_playerSpawned.position.x);
+        int SpawnY = Mathf.RoundToInt(_playerSpawned.position.z);
+
+        int itemSpawnX = Mathf.RoundToInt(_itemSpawned.position.x);
+        int itemSpawnZ = Mathf.RoundToInt(_itemSpawned.position.z);
+        
+        int roomSpawnX = Mathf.RoundToInt(_roomSpawned.position.x);
+        int roomSpawnZ = Mathf.RoundToInt(_roomSpawned.position.z);
+        
+        int collectableSpawnX = Mathf.RoundToInt(_collectablesSpawned.position.x);
+        int collectableSpawnZ = Mathf.RoundToInt(_collectablesSpawned.position.z);
+        
+        if (SpawnX >= 0 && SpawnX < dungeonWidth && SpawnY >= 0 && SpawnY < dungeonLength)
+        {
+            if (!_exploredAreaMap[SpawnX, SpawnY])
+            {
+                _exploredAreaMap[SpawnX, SpawnY] = true;
+                minimapTexture.SetPixel(SpawnX, SpawnY, _playerColor);
+                minimapTexture.SetPixel(itemSpawnX, itemSpawnZ, _exploredItemColor);
+                minimapTexture.SetPixel(roomSpawnX, roomSpawnZ, _exploredRoomColor);
+                minimapTexture.SetPixel(collectableSpawnX, collectableSpawnZ, _exploredCollectableColor);
+                minimapTexture.Apply();
+            }
+        }
+    }
+
+    private void AddRoomsToMinimap(Vector2 bottomLeftCorner, Vector2 topRightCorner)
+    {
+        // Vector3 roomMinimapPos = new Vector3(bottomLeftCorner.x, 0f, topRightCorner.y);
+//
+        // if (!_exploredAreaMap[roomMinimapPos, roomMinimapPos])
+        // {
+        //     
+        // }
+         
+        // minimapImage = Instantiate(minimapImage, _minimap); 
+        // minimapImage.transform.localPosition = roomMinimapPos;
     }
     
     private void DestroyAllChildren()
