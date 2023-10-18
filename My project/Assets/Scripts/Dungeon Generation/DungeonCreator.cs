@@ -147,8 +147,8 @@ public class DungeonCreator : MonoBehaviour
 
            if (!itemSpawned)
            {
-               Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 5f);
-               Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 5f);
+               Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , 5f, listOfRooms[i].BottomLeftAreaCorner.y / 2f);
+               Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , 5f, listOfRooms[i].TopRightAreaCorner.y / 2f);
                PlaceEndItemInWorld(minRange, maxRange);
                itemSpawned = true;
            }
