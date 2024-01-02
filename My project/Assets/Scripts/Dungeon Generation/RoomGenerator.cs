@@ -8,11 +8,11 @@ namespace Dungeon_Generation
 {
     public class RoomGenerator : MonoBehaviour
     {
-        private int maxIterations;
-        private int roomLengthMin;
-        private int roomWidthMin;
+        public int maxIterations;
+        public int roomLengthMin;
+        public int roomWidthMin;
+        public bool isExplored = false;
 
-      
 
         private List<Vector3Int> _possibleWallHorizPos;
         private List<Vector3Int> _possibleWallVertPos;

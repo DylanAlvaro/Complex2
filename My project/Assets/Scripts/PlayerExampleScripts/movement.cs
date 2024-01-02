@@ -11,13 +11,15 @@ public class movement : MonoBehaviour
     private float vRot = 0f;
     private float hRot = 0f;
     private Rigidbody rb;
-
+  
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
     }
+
+    
 
     void Update()
     {

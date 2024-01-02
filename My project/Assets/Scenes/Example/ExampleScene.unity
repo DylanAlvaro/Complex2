@@ -449,6 +449,22 @@ PrefabInstance:
       value: Generator
       objectReference: {fileID: 0}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: size.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: size.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: roomOffset
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: hazardCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: dungeonWidth
       value: 50
       objectReference: {fileID: 0}
@@ -462,7 +478,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: maxIterations
-      value: 5
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: maxRoomSize.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: maxRoomSize.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: obstacleCount
@@ -471,15 +495,35 @@ PrefabInstance:
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: obstacleSpawns
       value: 
-      objectReference: {fileID: 192367576345370799, guid: 2e0c98aad5c07974ba4946b242966175, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: collectableCount
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: hazardSpawnLocations
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: roomTopCornerMidifier
+      value: 0.775
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: hazardSpawns.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: roomBottomCornerModifier
+      value: 0.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: obstacleSpawns.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: hazardSpawns.Array.data[0]
+      value: 
+      objectReference: {fileID: 5439988518394225632, guid: 77470ef0e5fc6054dad25becfc82b02a, type: 3}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: collectableSpawns.Array.size
       value: 3

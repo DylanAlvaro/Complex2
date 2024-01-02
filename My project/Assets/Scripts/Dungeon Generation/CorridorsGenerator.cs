@@ -6,11 +6,17 @@ namespace Dungeon_Generation
 {
     public class CorridorsGenerator : MonoBehaviour
     {
-        public List<Node> CreateCorridor(List<RoomNode> allNodesCollection, int corridorWidth)
+        /// <summary>
+        /// adds to list of nodes
+        /// </summary>
+        /// <param name="nodeCollection"></param>
+        /// <param name="corridorWidth"></param>
+        /// <returns></returns>
+        public List<Node> CreateCorridor(List<RoomNode> nodeCollection, int corridorWidth)
         {
             List<Node> corridorList = new List<Node>();
             Queue<RoomNode> structuresToCheck =
-                new Queue<RoomNode>(allNodesCollection.OrderByDescending(node => node.TreeLayerIndex).ToList());
+                new Queue<RoomNode>(nodeCollection.OrderByDescending(node => node.TreeLayerIndex).ToList());
 
             while (structuresToCheck.Count > 0)
             {

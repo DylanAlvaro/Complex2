@@ -21,7 +21,17 @@ namespace Dungeon_Generation
             this.dungeonWidth = dungeonWidth;
             this.dungeonLength = dungeonLength;
         }
-        
+        /// <summary>
+        /// important information for creating the rooms and corridors used in dungeon creator script
+        /// </summary>
+        /// <param name="maxIterations"></param>
+        /// <param name="roomWidthMin"></param>
+        /// <param name="roomLengthMin"></param>
+        /// <param name="roomBottomCornerModifier"></param>
+        /// <param name="roomTopCornerMidifier"></param>
+        /// <param name="roomOffset"></param>
+        /// <param name="corridorWidth"></param>
+        /// <returns></returns>
         public List<Node> CalculateRooms(int maxIterations, int roomWidthMin, int roomLengthMin, float roomBottomCornerModifier, float roomTopCornerMidifier, int roomOffset, int corridorWidth)
         {
             BinarySpace bsp = new BinarySpace(dungeonWidth, dungeonLength);
