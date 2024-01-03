@@ -25,6 +25,14 @@ namespace PlayerExampleScripts
                 itemText = _canvas.GetComponentInChildren<TextMeshProUGUI>();
         }
 
+        /// <summary>
+        /// if item is called enditem
+        /// item int is increased
+        /// item is destroyed
+        /// value is increased in UI
+        /// if more than 5 are collected than game over.
+        /// </summary>
+        /// <param name="other"></param>
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("endItem"))

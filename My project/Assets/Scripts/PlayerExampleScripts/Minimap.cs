@@ -7,7 +7,5 @@ using UnityEngine.UI;
 
 public class Minimap : MonoBehaviour
 {
-    public List<RoomGenerator> rooms;
-
    
 }

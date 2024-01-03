@@ -19,8 +19,9 @@ public class movement : MonoBehaviour
         rb.freezeRotation = true;
     }
 
-    
-
+    /// <summary>
+    /// Player movement
+    /// </summary>
     void Update()
     {
         // Mouse rotation

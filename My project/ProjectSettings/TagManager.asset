@@ -7,6 +7,8 @@ TagManager:
   - endItem
   - Canvas
   - itemText
+  - floor
+  - floormat
   layers:
   - Default
   - TransparentFX

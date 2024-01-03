@@ -303,6 +303,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 962884002, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 962884002, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 975005008, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1668084694, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1668084694, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1668084694, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -475
+      objectReference: {fileID: 0}
+    - target: {fileID: 1668084694, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 187
+      objectReference: {fileID: 0}
     - target: {fileID: 1596043078331062019, guid: 33c7d0add3a89784687e3c24c35484b5, type: 3}
       propertyPath: m_Name
       value: Canvas

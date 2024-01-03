@@ -13,7 +13,13 @@ public class Player : MonoBehaviour
     {
         currentHealth = maxHealth;
     }
-
+/// <summary>
+/// Unused script for player damage, useful for users
+/// if they want to expand upon this game for AI or hazards
+/// which functionality exists for but isn't in the
+/// game currently. 
+/// </summary>
+/// <param name="damage"></param>
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
