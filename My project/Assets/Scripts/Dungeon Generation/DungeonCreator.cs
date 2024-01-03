@@ -429,14 +429,11 @@ public class DungeonCreator : MonoBehaviour
         var position1 = _itemSpawned.position;
         int itemSpawnX = Mathf.RoundToInt(position1.x);
         int itemSpawnZ = Mathf.RoundToInt(position1.z);
-
         
-
         var position4 = _collectablesSpawned.position;
         int collectableSpawnX = Mathf.RoundToInt(position4.x);
         int collectableSpawnZ = Mathf.RoundToInt(position4.z);
-
-
+        
         if (_isInRoom && _roomSpawned != null)
         {
             var position3 = _roomSpawned.transform.position;
@@ -506,9 +503,7 @@ public class DungeonCreator : MonoBehaviour
             }
         }
     }
-
-
-
+    
     private void DestroyAllChildren()
     {
         while (transform.childCount != 0)
