@@ -485,6 +485,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
+      propertyPath: ItemCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980913152699938359, guid: 1755a3e8a7c3bca44bc87db6406b3420, type: 3}
       propertyPath: roomOffset
       value: 1
       objectReference: {fileID: 0}

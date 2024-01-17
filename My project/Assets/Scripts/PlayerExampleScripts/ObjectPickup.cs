@@ -15,11 +15,15 @@ namespace PlayerExampleScripts
         public int items;
         private bool collectedItems;
         private Canvas _canvas;
+        private Collider itemCollider;
+        private Renderer itemRenderer;
 
         private void Start()
         {
             items = 0;
             _canvas = FindObjectOfType<Canvas>();
+            itemCollider = GetComponent<Collider>();
+            itemRenderer = GetComponent<Renderer>();
 
             if (_canvas != null)
                 itemText = _canvas.GetComponentInChildren<TextMeshProUGUI>();
@@ -35,13 +39,22 @@ namespace PlayerExampleScripts
         /// <param name="other"></param>
         private void OnTriggerEnter(Collider other)
         {
+            Debug.Log("OntriggerCalled");
             if (other.CompareTag("endItem"))
             {
-                Destroy(other.gameObject);
-                items++;
-                itemText.text = "Items Collected: " + items;
+                Collect();
             }
+        }
 
+        private void Collect()
+        {
+            Debug.Log("collected called");
+            //Destroy(other.gameObject);
+            itemCollider.enabled = false;
+            itemRenderer.enabled = false;
+            items++;
+            itemText.text = "Items Collected: " + items;
+            
             if (items >= 5)
             {
                 LoadNextScene();

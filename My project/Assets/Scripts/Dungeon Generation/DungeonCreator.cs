@@ -164,11 +164,18 @@ public class DungeonCreator : MonoBehaviour
 
            if (i == 0)
            {
+               //if (!playerSpawned)
+               //{
+               //    Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 0f);
+               //    Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 0f);
+               //    PlacePlayerInWorld(minRange, maxRange);
+               //    playerSpawned = true;
+               //}
+               
                if (!playerSpawned)
                {
-                   Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , listOfRooms[i].BottomLeftAreaCorner.y /2f, 0f);
-                   Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , listOfRooms[i].TopRightAreaCorner.y / 2f, 0f);
-                   PlacePlayerInWorld(minRange, maxRange);
+                   SpawnPlayer(new Vector3((listOfRooms[i].BottomLeftAreaCorner.x + listOfRooms[i].TopRightAreaCorner.x) / 2,
+                       1, (listOfRooms[i].BottomLeftAreaCorner.y + listOfRooms[i].TopRightAreaCorner.y) / 2));
                    playerSpawned = true;
                }
 
@@ -186,11 +193,18 @@ public class DungeonCreator : MonoBehaviour
 
            if (!lootRoom) continue;
            {
+               //if (!itemSpawned)
+               //{
+               //    Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , 5f, listOfRooms[i].BottomLeftAreaCorner.y / 2f);
+               //    Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , 5f, listOfRooms[i].TopRightAreaCorner.y / 2f);
+               //    PlaceEndItemInWorld(minRange, maxRange);
+               //    itemSpawned = true;
+               //}
+               
                if (!itemSpawned)
                {
-                   Vector3 minRange = new Vector3(listOfRooms[i].BottomLeftAreaCorner.x / 2f  , 5f, listOfRooms[i].BottomLeftAreaCorner.y / 2f);
-                   Vector3 maxRange = new Vector3(listOfRooms[i].TopRightAreaCorner.x / 2f , 5f, listOfRooms[i].TopRightAreaCorner.y / 2f);
-                   PlaceEndItemInWorld(minRange, maxRange);
+                   PlaceItemInWorld(new Vector3((listOfRooms[i].BottomLeftAreaCorner.x + listOfRooms[i].TopRightAreaCorner.x) / 2,
+                       0, (listOfRooms[i].BottomLeftAreaCorner.y + listOfRooms[i].TopRightAreaCorner.y) / 2));
                    itemSpawned = true;
                }
            
@@ -206,6 +220,13 @@ public class DungeonCreator : MonoBehaviour
            }
        }
        CreateWalls(wallParent);
+   }
+
+   private void SpawnPlayer(Vector3 position)
+   {
+       var playerSpawn = Instantiate(player, position, Quaternion.identity);
+       
+       _playerSpawned = playerSpawn.transform;
    }
    
    private void CreateWalls(GameObject wallParent)
@@ -273,14 +294,14 @@ public class DungeonCreator : MonoBehaviour
         _dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
         _dungeonFloor.GetComponent<MeshRenderer>().material = floorMaterial;
         _dungeonFloor.GetComponent<MeshCollider>().sharedMesh = mesh;
-        _dungeonFloor.GetComponent<MeshCollider>().isTrigger = true;
+        //_dungeonFloor.GetComponent<MeshCollider>().isTrigger = true;
 
         _dungeonFloor.tag = "floor";
 
         _roomSpawned = _dungeonFloor.transform;
         _roomSpawned.transform.position = Vector3.zero;
-        Debug.Log("locationX" + _roomSpawned.transform.position.x);
-        Debug.Log("locationY" + _roomSpawned.transform.position.y);
+       // Debug.Log("locationX" + _roomSpawned.transform.position.x);
+       // Debug.Log("locationY" + _roomSpawned.transform.position.y);
 
         //// creates roof mesh
        GameObject dungeonRoof = new GameObject("Dungeon Roof" + topRightCorner, typeof(MeshFilter), typeof(MeshRenderer));
@@ -328,31 +349,16 @@ public class DungeonCreator : MonoBehaviour
         }
     }
     
-    public void PlacePlayerInWorld(Vector3 minRange, Vector3 maxRange)
-    { 
-        float spawnX = Random.Range(minRange.x, maxRange.x );
-        float spawnY = Random.Range(minRange.y, maxRange.y );
-        
-        Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
-        
-        var playerSpawn = Instantiate(player);
-        playerSpawn.name = "Player";
-        playerSpawn.transform.parent = transform.parent;
-        playerSpawn.transform.localPosition = spawnPosition;
-
-        _playerSpawned = playerSpawn.transform;
-    }
-
-    public void PlaceEndItemInWorld(Vector3 minRange, Vector3 maxRange)
+    public void PlaceItemInWorld(Vector3 position)
     {
+        
         for (int i = 0; i < ItemCount; i++)
         {
-            float spawnY = Random.Range(minRange.x, maxRange.y);
-            float spawnX = Random.Range(minRange.x, maxRange.x);
+            float spawnY = Random.Range(position.x, position.y);
+            float spawnX = Random.Range(position.x, position.x);
             
             Vector3 spawnPosition = new Vector3(spawnX, 0f, spawnY);
-            
-            var item = Instantiate(itemSpawn);
+            var item = Instantiate(itemSpawn, position, Quaternion.identity);
             item.name = "End Item";
             item.transform.parent = transform.parent;
             item.transform.localPosition = spawnPosition;
@@ -360,7 +366,6 @@ public class DungeonCreator : MonoBehaviour
             _itemSpawned = item.transform;
         }
     }
-
     public void PlaceObstaclesInWorld(Vector3 minRange, Vector3 maxRange)
     {
         for (int i = 0; i < obstacleCount; i++)
@@ -396,8 +401,6 @@ public class DungeonCreator : MonoBehaviour
             _collectablesSpawned = collectables.transform;
         }
     }
-    
-
     private void InitializeMinimap()
     {
         minimapTexture = new Texture2D(dungeonWidth, dungeonLength);
@@ -451,7 +454,7 @@ public class DungeonCreator : MonoBehaviour
             if (!_exploredAreaMap[spawnX, spawnZ])
             {
                     _exploredAreaMap[spawnX, spawnZ] = true; 
-                    minimapTexture.SetPixel(spawnX, spawnZ, _playerColor);
+                    //minimapTexture.SetPixel(spawnX, spawnZ, _playerColor);
                     minimapTexture.SetPixel(itemSpawnX, itemSpawnZ, _exploredItemColor);
                     minimapTexture.SetPixel(collectableSpawnX, collectableSpawnZ, _exploredCollectableColor);
                     _exploredRoom = true;
@@ -472,13 +475,13 @@ public class DungeonCreator : MonoBehaviour
 
     private bool IsPlayerInRoom(out Vector3 roomPosition, out Vector3 roomSize)
     {
-        roomPosition = Vector3.zero;
+        roomPosition = Vector3.forward;
         roomSize = Vector3.zero;
         RaycastHit hit;
         
         Ray ray = new Ray(_playerSpawned.position, Vector3.down);
         
-        if (Physics.Raycast(ray, out hit, 1.0f))
+        if (Physics.Raycast(ray, out hit, 2f))
         {
             if (hit.collider.CompareTag("floor"))
             {
