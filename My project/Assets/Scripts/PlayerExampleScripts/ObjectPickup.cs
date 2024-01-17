@@ -39,27 +39,34 @@ namespace PlayerExampleScripts
         /// <param name="other"></param>
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log("OntriggerCalled");
             if (other.CompareTag("endItem"))
             {
-                Collect();
+                Destroy(other.gameObject);
+                itemCollider.enabled = false;
+                itemRenderer.enabled = false;
+                items++;
+                itemText.text = "Items Collected: " + items;
             }
-        }
-
-        private void Collect()
-        {
-            Debug.Log("collected called");
-            //Destroy(other.gameObject);
-            itemCollider.enabled = false;
-            itemRenderer.enabled = false;
-            items++;
-            itemText.text = "Items Collected: " + items;
             
             if (items >= 5)
             {
                 LoadNextScene();
             }
         }
+
+      // private void Collect()
+      // {
+      //     Destroy(other.gameObject);
+      //     itemCollider.enabled = false;
+      //     itemRenderer.enabled = false;
+      //     items++;
+      //     itemText.text = "Items Collected: " + items;
+      //     
+      //     if (items >= 5)
+      //     {
+      //         LoadNextScene();
+      //     }
+      // }
 
         void LoadNextScene()
         {

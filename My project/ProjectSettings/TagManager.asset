@@ -9,6 +9,7 @@ TagManager:
   - itemText
   - floor
   - floormat
+  - collectable
   layers:
   - Default
   - TransparentFX
